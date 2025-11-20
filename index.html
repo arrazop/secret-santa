@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Santa - Random Duos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎅 Secret Santa</h1>
+            <p class="subtitle">Créez des duos aléatoires pour votre échange de cadeaux</p>
+        </header>
+
+        <main>
+            <section class="participants-section">
+                <h2>Participants</h2>
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="participantInput" 
+                        placeholder="Entrez le nom d'un participant"
+                        maxlength="50"
+                    >
+                    <button id="addBtn" class="btn btn-primary">Ajouter</button>
+                </div>
+                
+                <div id="participantsList" class="participants-list">
+                    <p class="empty-message">Aucun participant ajouté</p>
+                </div>
+            </section>
+
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2>Duos générés</h2>
+                <div id="resultsList" class="results-list"></div>
+                <button id="regenerateBtn" class="btn btn-secondary">Régénérer</button>
+            </section>
+
+            <div class="actions">
+                <button id="generateBtn" class="btn btn-large btn-primary" disabled>
+                    Générer les duos
+                </button>
+                <button id="clearBtn" class="btn btn-large btn-danger">
+                    Tout effacer
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
