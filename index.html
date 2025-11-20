@@ -32,9 +32,39 @@
             </section>
 
             <section class="results-section" id="resultsSection" style="display: none;">
-                <h2>Duos générés</h2>
+                <div class="results-header">
+                    <h2>Duos générés</h2>
+                    <div class="mode-toggles">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="progressiveMode">
+                            <span class="toggle-label">Mode révélation progressive</span>
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="individualViewMode">
+                            <span class="toggle-label">Vue individuelle</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="individualViewSection" class="individual-view-section" style="display: none;">
+                    <div class="individual-search">
+                        <input 
+                            type="text" 
+                            id="individualSearchInput" 
+                            placeholder="Entrez votre nom pour voir votre destinataire"
+                            list="participantsDatalist"
+                        >
+                        <datalist id="participantsDatalist"></datalist>
+                        <button id="searchBtn" class="btn btn-primary">Rechercher</button>
+                    </div>
+                    <div id="individualResult" class="individual-result"></div>
+                </div>
+                
                 <div id="resultsList" class="results-list"></div>
-                <button id="regenerateBtn" class="btn btn-secondary">Régénérer</button>
+                <div class="results-actions">
+                    <button id="revealAllBtn" class="btn btn-secondary" style="display: none;">Révéler tout</button>
+                    <button id="regenerateBtn" class="btn btn-secondary">Régénérer</button>
+                </div>
             </section>
 
             <div class="actions">
