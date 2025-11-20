@@ -1,6 +1,8 @@
 // État de l'application
 let participants = [];
 let duos = [];
+let progressiveMode = false;
+let revealedDuos = new Set();
 
 // Éléments DOM
 const participantInput = document.getElementById('participantInput');
@@ -11,6 +13,8 @@ const clearBtn = document.getElementById('clearBtn');
 const resultsSection = document.getElementById('resultsSection');
 const resultsList = document.getElementById('resultsList');
 const regenerateBtn = document.getElementById('regenerateBtn');
+const progressiveModeToggle = document.getElementById('progressiveMode');
+const revealAllBtn = document.getElementById('revealAllBtn');
 
 // Charger les participants depuis le localStorage
 function loadParticipants() {
@@ -94,6 +98,9 @@ function generateDuos() {
         return;
     }
     
+    // Réinitialiser les révélations
+    revealedDuos.clear();
+    
     // Créer une copie mélangée des participants
     const shuffled = [...participants].sort(() => Math.random() - 0.5);
     
@@ -146,13 +153,92 @@ function generateDuos() {
 
 // Afficher les résultats
 function renderResults() {
-    resultsList.innerHTML = duos.map(duo => `
-        <div class="duo-card">
-            <span class="giver">${escapeHtml(duo.giver)}</span>
-            <span class="arrow">→</span>
-            <span class="receiver">${escapeHtml(duo.receiver)}</span>
-        </div>
-    `).join('');
+    const duoId = (duo) => `${duo.giver}-${duo.receiver}`;
+    
+    resultsList.innerHTML = duos.map((duo, index) => {
+        const id = duoId(duo);
+        const isRevealed = revealedDuos.has(id);
+        const hiddenClass = progressiveMode && !isRevealed ? 'hidden' : '';
+        const revealedClass = isRevealed ? 'revealed' : '';
+        
+        return `
+            <div class="duo-card ${hiddenClass} ${revealedClass}" data-duo-id="${escapeHtml(id)}" data-index="${index}">
+                <div class="duo-content">
+                    <span class="giver">${escapeHtml(duo.giver)}</span>
+                    <span class="arrow">→</span>
+                    <span class="receiver">${escapeHtml(duo.receiver)}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Ajouter les event listeners pour la révélation
+    if (progressiveMode) {
+        document.querySelectorAll('.duo-card.hidden').forEach(card => {
+            card.addEventListener('click', revealDuo);
+        });
+        revealAllBtn.style.display = 'block';
+    } else {
+        revealAllBtn.style.display = 'none';
+    }
+}
+
+// Révéler un duo spécifique
+function revealDuo(event) {
+    const card = event.currentTarget;
+    const duoId = card.getAttribute('data-duo-id');
+    
+    if (revealedDuos.has(duoId)) return;
+    
+    revealedDuos.add(duoId);
+    card.classList.add('revealing');
+    card.classList.remove('hidden');
+    
+    setTimeout(() => {
+        card.classList.remove('revealing');
+        card.classList.add('revealed');
+        card.removeEventListener('click', revealDuo);
+        
+        // Vérifier si tous les duos sont révélés
+        if (revealedDuos.size === duos.length) {
+            revealAllBtn.style.display = 'none';
+        }
+    }, 800);
+}
+
+// Révéler tous les duos progressivement
+function revealAllDuos() {
+    const hiddenCards = document.querySelectorAll('.duo-card.hidden');
+    
+    if (hiddenCards.length === 0) return;
+    
+    hiddenCards.forEach((card, index) => {
+        setTimeout(() => {
+            const duoId = card.getAttribute('data-duo-id');
+            revealedDuos.add(duoId);
+            card.classList.add('revealing');
+            card.classList.remove('hidden');
+            
+            setTimeout(() => {
+                card.classList.remove('revealing');
+                card.classList.add('revealed');
+            }, 800);
+        }, index * 300); // Délai de 300ms entre chaque révélation
+    });
+    
+    setTimeout(() => {
+        revealAllBtn.style.display = 'none';
+    }, hiddenCards.length * 300 + 800);
+}
+
+// Toggle du mode progressif
+function toggleProgressiveMode() {
+    progressiveMode = progressiveModeToggle.checked;
+    revealedDuos.clear();
+    
+    if (duos.length > 0) {
+        renderResults();
+    }
 }
 
 // Effacer tout
@@ -186,6 +272,8 @@ participantInput.addEventListener('keypress', (e) => {
 generateBtn.addEventListener('click', generateDuos);
 regenerateBtn.addEventListener('click', generateDuos);
 clearBtn.addEventListener('click', clearAll);
+progressiveModeToggle.addEventListener('change', toggleProgressiveMode);
+revealAllBtn.addEventListener('click', revealAllDuos);
 
 // Initialisation
 loadParticipants();

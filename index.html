@@ -32,9 +32,18 @@
             </section>
 
             <section class="results-section" id="resultsSection" style="display: none;">
-                <h2>Duos générés</h2>
+                <div class="results-header">
+                    <h2>Duos générés</h2>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="progressiveMode">
+                        <span class="toggle-label">Mode révélation progressive</span>
+                    </label>
+                </div>
                 <div id="resultsList" class="results-list"></div>
-                <button id="regenerateBtn" class="btn btn-secondary">Régénérer</button>
+                <div class="results-actions">
+                    <button id="revealAllBtn" class="btn btn-secondary" style="display: none;">Révéler tout</button>
+                    <button id="regenerateBtn" class="btn btn-secondary">Régénérer</button>
+                </div>
             </section>
 
             <div class="actions">
